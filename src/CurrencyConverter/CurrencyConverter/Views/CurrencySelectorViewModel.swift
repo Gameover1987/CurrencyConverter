@@ -4,10 +4,16 @@ import Foundation
 final class CurrencySelectorViewModel {
     
     private let currencyApi: CurrencyApiProtocol
+    private var exceptCurrency: String = ""
     
     init (currencyApi: CurrencyApiProtocol, selectedCurrency: String) {
         self.currencyApi = currencyApi
         self.selectedCurrency = selectedCurrency
+    }
+    
+    convenience init (currencyApi: CurrencyApiProtocol, selectedCurrency: String, exceptCurrency: String) {
+        self.init(currencyApi: currencyApi, selectedCurrency: selectedCurrency)
+        self.exceptCurrency = exceptCurrency
     }
     
     var selectedCurrency: String = "" {
@@ -64,6 +70,10 @@ final class CurrencySelectorViewModel {
                 allCurrencies += currencyPair.toArray()
             }
             currencyList = allCurrencies.distinct().sorted()
+        }
+        
+        currencyList.removeAll { currencyInList in
+            return currencyInList == self.exceptCurrency
         }
     }
 }

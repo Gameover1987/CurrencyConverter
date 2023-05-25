@@ -89,6 +89,8 @@ final class CurrencyConverterViewController : UIViewController {
         return button
     }()
     
+    private var refreshButtonBottomConstraint: NSLayoutConstraint! = nil
+    
     private let converterViewModel: CurrencyConverterViewModel
     
     init(currencyConverterViewModel: CurrencyConverterViewModel) {
@@ -128,7 +130,9 @@ final class CurrencyConverterViewController : UIViewController {
     
     @objc
     private func currencyAButtonPressed() {
-        let currencySelectorViewModel = CurrencySelectorViewModel(currencyApi: CurrencyApi.shared, selectedCurrency: converterViewModel.currencyA)
+        let currencySelectorViewModel = CurrencySelectorViewModel(
+            currencyApi: CurrencyApi.shared,
+            selectedCurrency: converterViewModel.currencyA)
         currencySelectorViewModel.currencySelectedAction = currencyASelectedBySelector(currency:)
         let currencySelectorController = CurrencySelectorViewController(for: "", currencySelectorViewModel: currencySelectorViewModel)
         self.navigationController?.pushViewController(currencySelectorController, animated: true)
@@ -136,7 +140,10 @@ final class CurrencyConverterViewController : UIViewController {
     
     @objc
     private func currencyBButtonPressed() {
-        let currencySelectorViewModel = CurrencySelectorViewModel(currencyApi: CurrencyApi.shared, selectedCurrency: converterViewModel.currencyB)
+        let currencySelectorViewModel = CurrencySelectorViewModel(
+            currencyApi: CurrencyApi.shared,
+            selectedCurrency: converterViewModel.currencyB,
+            exceptCurrency: converterViewModel.currencyA)
         currencySelectorViewModel.currencySelectedAction = currencyBSelectedBySelector(currency:)
         let currencySelectorController = CurrencySelectorViewController(
             for: converterViewModel.currencyA,
@@ -166,7 +173,7 @@ final class CurrencyConverterViewController : UIViewController {
     }
     
     @objc func keyboardWillShow(_ notification: NSNotification) {
-            moveViewWithKeyboard(notification: notification, keyboardWillShow: true)
+        moveViewWithKeyboard(notification: notification, keyboardWillShow: true)
     }
     
     @objc func keyboardWillHide(_ notification: NSNotification) {
@@ -187,16 +194,10 @@ final class CurrencyConverterViewController : UIViewController {
         // Change the constant
         if keyboardWillShow {
             let safeAreaExists = (self.view?.window?.safeAreaInsets.bottom != 0) // Check if safe area exists
-            let bottomConstant: CGFloat = 20
-            let offset = keyboardHeight + (safeAreaExists ? 0 : bottomConstant)
-            refreshButton.snp.makeConstraints { make in
-                make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-offset)
-            }
-            
+            let bottomConstant: CGFloat = 5
+            refreshButtonBottomConstraint.constant = -(keyboardHeight + (safeAreaExists ? 0 : bottomConstant))
         } else {
-            refreshButton.snp.makeConstraints { make in
-                make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-24)
-            }
+            refreshButtonBottomConstraint.constant = -24
         }
         
         // Animate the view the same way the keyboard animates
@@ -301,12 +302,21 @@ final class CurrencyConverterViewController : UIViewController {
         }
 
         view.addSubview(refreshButton)
-        refreshButton.snp.makeConstraints { make in
-            make.left.equalTo(view.safeAreaLayoutGuide).offset(24)
-            make.right.equalTo(view.safeAreaLayoutGuide).offset(-24)
-            make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-24)
-            make.height.equalTo(56)
-        }
+        refreshButton.translatesAutoresizingMaskIntoConstraints = false
+//        refreshButton.snp.makeConstraints { make in
+//            make.left.equalTo(view.safeAreaLayoutGuide).offset(24)
+//            make.right.equalTo(view.safeAreaLayoutGuide).offset(-24)
+//            make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-24)
+//            make.height.equalTo(56)
+//        }
+        
+        self.refreshButtonBottomConstraint = refreshButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -24)
+        NSLayoutConstraint.activate([
+            refreshButton.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 24),
+            refreshButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -24),
+            self.refreshButtonBottomConstraint,
+            refreshButton.heightAnchor.constraint(equalToConstant: 56)
+        ])
     }
 }
 
