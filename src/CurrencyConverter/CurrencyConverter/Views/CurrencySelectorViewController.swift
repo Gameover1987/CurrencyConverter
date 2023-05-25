@@ -75,6 +75,12 @@ extension CurrencySelectorViewController : UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
         cell.selectionStyle = .none
         cell.textLabel?.text = currencySelectorViewModel.currencyList[indexPath.row]
+        if (currencySelectorViewModel.selectedCurrency == currencySelectorViewModel.currencyList[indexPath.row]) {
+            cell.accessoryType = .checkmark
+        } else {
+            cell.accessoryType = .none
+        }
+        
         return cell
     }
 }

@@ -87,16 +87,16 @@ final class CurrencyConverterViewController : UIViewController {
         return button
     }()
     
-    private let currencyConverterViewModel: CurrencyConverterViewModel
+    private let converterViewModel: CurrencyConverterViewModel
     
     init(currencyConverterViewModel: CurrencyConverterViewModel) {
-        self.currencyConverterViewModel = currencyConverterViewModel
+        self.converterViewModel = currencyConverterViewModel
 
         super.init(nibName: nil, bundle: nil)
         
-        self.currencyConverterViewModel.currencyASelectedAction = currencyASelectedAction(currency:)
-        self.currencyConverterViewModel.currencyBSelectedAction = currencyBSelectedAction(currency:)
-        self.currencyConverterViewModel.currencyBValueChangedAction = currencyBValueChangedAction(amount:)
+        self.converterViewModel.currencyASelectedAction = currencyASelectedAction(currency:)
+        self.converterViewModel.currencyBSelectedAction = currencyBSelectedAction(currency:)
+        self.converterViewModel.currencyBValueChangedAction = currencyBValueChangedAction(amount:)
     }
     
     required init?(coder: NSCoder) {
@@ -109,12 +109,12 @@ final class CurrencyConverterViewController : UIViewController {
     
     @objc
     private func swapCurrencyButtonPressed() {
-        currencyConverterViewModel.swap()
+        converterViewModel.swap()
     }
     
     @objc
     private func currencyAButtonPressed() {
-        let currencySelectorViewModel = CurrencySelectorViewModel(currencyApi: CurrencyApi.shared)
+        let currencySelectorViewModel = CurrencySelectorViewModel(currencyApi: CurrencyApi.shared, selectedCurrency: converterViewModel.currencyA)
         currencySelectorViewModel.currencySelectedAction = currencyASelectedBySelector(currency:)
         let currencySelectorController = CurrencySelectorViewController(for: "", currencySelectorViewModel: currencySelectorViewModel)
         self.navigationController?.pushViewController(currencySelectorController, animated: true)
@@ -122,10 +122,10 @@ final class CurrencyConverterViewController : UIViewController {
     
     @objc
     private func currencyBButtonPressed() {
-        let currencySelectorViewModel = CurrencySelectorViewModel(currencyApi: CurrencyApi.shared)
+        let currencySelectorViewModel = CurrencySelectorViewModel(currencyApi: CurrencyApi.shared, selectedCurrency: converterViewModel.currencyB)
         currencySelectorViewModel.currencySelectedAction = currencyBSelectedBySelector(currency:)
         let currencySelectorController = CurrencySelectorViewController(
-            for: currencyConverterViewModel.currencyA,
+            for: converterViewModel.currencyA,
             currencySelectorViewModel: currencySelectorViewModel)
         self.navigationController?.pushViewController(currencySelectorController, animated: true)
     }
@@ -134,35 +134,35 @@ final class CurrencyConverterViewController : UIViewController {
     private func currencyATextFieldEditingChanged() {
         guard let text = currencyATextField.text else {return}
         guard let currencyParsedValue = Double(text) else {return}
-        currencyConverterViewModel.currencyAValue = Double(currencyParsedValue)
-        refreshButton.isEnabled = currencyConverterViewModel.isCalculationEnabled
+        converterViewModel.currencyAValue = Double(currencyParsedValue)
+        refreshButton.isEnabled = converterViewModel.isCalculationEnabled
     }
     
     @objc
     private func performCalculation() {
-        currencyConverterViewModel.calculate()
+        converterViewModel.calculate()
     }
     
     private func currencyASelectedBySelector(currency: String) {
-        currencyConverterViewModel.currencyA = currency
-        swapCurrencyButton.isEnabled = currencyConverterViewModel.isSwapEnabled
+        converterViewModel.currencyA = currency
+        swapCurrencyButton.isEnabled = converterViewModel.isSwapEnabled
     }
     
     private func currencyBSelectedBySelector(currency: String) {
-        currencyConverterViewModel.currencyB = currency
-        swapCurrencyButton.isEnabled = currencyConverterViewModel.isSwapEnabled
+        converterViewModel.currencyB = currency
+        swapCurrencyButton.isEnabled = converterViewModel.isSwapEnabled
     }
     
     private func currencyASelectedAction(currency: String) {
-        currencyAButton.setTitle(currencyConverterViewModel.currencyA, for: .normal)
+        currencyAButton.setTitle(converterViewModel.currencyA, for: .normal)
         currencyAButton.setTitleColor(.black, for: .normal)
-        refreshButton.isEnabled = currencyConverterViewModel.isCalculationEnabled
+        refreshButton.isEnabled = converterViewModel.isCalculationEnabled
     }
     
     private func currencyBSelectedAction(currency: String) {
-        currencyBButton.setTitle(currencyConverterViewModel.currencyB, for: .normal)
+        currencyBButton.setTitle(converterViewModel.currencyB, for: .normal)
         currencyBButton.setTitleColor(.black, for: .normal)
-        refreshButton.isEnabled = currencyConverterViewModel.isCalculationEnabled
+        refreshButton.isEnabled = converterViewModel.isCalculationEnabled
     }
     
     private func currencyBValueChangedAction(amount: Double) {
@@ -175,8 +175,8 @@ final class CurrencyConverterViewController : UIViewController {
         title = "Currency converter"
         self.simplifyNavigationBar()
         
-        refreshButton.isEnabled = currencyConverterViewModel.isCalculationEnabled
-        swapCurrencyButton.isEnabled = currencyConverterViewModel.isSwapEnabled
+        refreshButton.isEnabled = converterViewModel.isCalculationEnabled
+        swapCurrencyButton.isEnabled = converterViewModel.isSwapEnabled
         
         view.addSubview(swapCurrencyButton)
         swapCurrencyButton.snp.makeConstraints { make in

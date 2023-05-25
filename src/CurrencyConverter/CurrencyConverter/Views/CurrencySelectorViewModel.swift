@@ -5,8 +5,9 @@ final class CurrencySelectorViewModel {
     
     private let currencyApi: CurrencyApiProtocol
     
-    init (currencyApi: CurrencyApiProtocol) {
+    init (currencyApi: CurrencyApiProtocol, selectedCurrency: String) {
         self.currencyApi = currencyApi
+        self.selectedCurrency = selectedCurrency
     }
     
     var selectedCurrency: String = "" {
