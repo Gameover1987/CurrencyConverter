@@ -153,8 +153,14 @@ final class CurrencyConverterViewController : UIViewController {
     
     @objc
     private func currencyATextFieldEditingChanged() {
-        guard let text = currencyATextField.text else {return}
-        guard let currencyParsedValue = Double(text) else {return}
+        guard let text = currencyATextField.text else {
+            refreshButton.isEnabled = false
+            return
+        }
+        guard let currencyParsedValue = Double(text) else {
+            refreshButton.isEnabled = false
+            return
+        }
         converterViewModel.currencyAValue = Double(currencyParsedValue)
         refreshButton.isEnabled = converterViewModel.isCalculationEnabled
     }
