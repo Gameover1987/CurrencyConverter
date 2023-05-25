@@ -34,6 +34,8 @@ final class CurrencyConverterViewController : UIViewController {
         textField.font = UIFont.systemFont(ofSize: 22)
         textField.keyboardType = .numberPad
         
+        textField.delegate = self
+        
         textField.addTarget(self, action: #selector(currencyATextFieldEditingChanged), for: .editingChanged)
         
         return textField
@@ -41,7 +43,7 @@ final class CurrencyConverterViewController : UIViewController {
     
     private lazy var currencyAUnderline: UIView = {
         let line = UIView()
-        line.backgroundColor = UIColor(red: 0.231, green: 0.44, blue: 0.977, alpha: 1)
+        line.backgroundColor = Colors.textEditBorder
         return line
     }()
     
@@ -56,7 +58,7 @@ final class CurrencyConverterViewController : UIViewController {
     
     private lazy var currencyBUnderline: UIView = {
         let line = UIView()
-        line.backgroundColor = UIColor(red: 0.231, green: 0.44, blue: 0.977, alpha: 1)
+        line.backgroundColor = Colors.textEditBorder
         return line
     }()
     
@@ -132,6 +134,14 @@ final class CurrencyConverterViewController : UIViewController {
     
     @objc
     private func currencyATextFieldEditingChanged() {
+        guard let text = currencyATextField.text else {return}
+        guard let currencyParsedValue = Double(text) else {return}
+        converterViewModel.currencyAValue = Double(currencyParsedValue)
+        refreshButton.isEnabled = converterViewModel.isCalculationEnabled
+    }
+    
+    @objc
+    private func currencyATextFieldTouch() {
         guard let text = currencyATextField.text else {return}
         guard let currencyParsedValue = Double(text) else {return}
         converterViewModel.currencyAValue = Double(currencyParsedValue)
@@ -241,5 +251,15 @@ final class CurrencyConverterViewController : UIViewController {
             make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-24)
             make.height.equalTo(56)
         }
+    }
+}
+
+extension CurrencyConverterViewController : UITextFieldDelegate {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        self.currencyAUnderline.backgroundColor = Colors.textEditBorderActive
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        self.currencyAUnderline.backgroundColor = Colors.textEditBorder
     }
 }
