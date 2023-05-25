@@ -70,14 +70,13 @@ final class CurrencyConverterViewModel {
     
     func calculate() {
         let pair = currencyA+currencyB
-        currencyApi.performCurrencyRateRequest(pair: pair) { [weak self] result in
+        currencyApi.performCurrencyRateRequest(pairAsString: pair) { [weak self] result in
             guard let self = self else {return}
             
             switch result {
             case .failure(let error):
                 print(error)
             case .success(let rate):
-                print(rate)
                 DispatchQueue.main.async {
                     self.currencyBValue = self.currencyAValue * rate.value
                 }

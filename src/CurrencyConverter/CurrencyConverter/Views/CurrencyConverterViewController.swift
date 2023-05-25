@@ -48,7 +48,6 @@ final class CurrencyConverterViewController : UIViewController {
     private lazy var currencyBTextField: UITextField = {
         let textField = UITextField()
         textField.textAlignment = .center
-        textField.text = "0.00"
         textField.font = UIFont.systemFont(ofSize: 22)
         textField.keyboardType = .numberPad
         

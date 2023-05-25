@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		80636D772A1FA09800352230 /* CurrencyPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80636D762A1FA09800352230 /* CurrencyPair.swift */; };
 		80A2E8222A1F2F7700AF0368 /* CurrencyConverterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80A2E8212A1F2F7700AF0368 /* CurrencyConverterViewController.swift */; };
 		80A2E8242A1F2FC500AF0368 /* CurrencyApiProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80A2E8232A1F2FC500AF0368 /* CurrencyApiProtocol.swift */; };
 		80A2E8262A1F33B700AF0368 /* CurrencyApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80A2E8252A1F33B700AF0368 /* CurrencyApi.swift */; };
@@ -23,6 +24,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		80636D762A1FA09800352230 /* CurrencyPair.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyPair.swift; sourceTree = "<group>"; };
 		80A2E8212A1F2F7700AF0368 /* CurrencyConverterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyConverterViewController.swift; sourceTree = "<group>"; };
 		80A2E8232A1F2FC500AF0368 /* CurrencyApiProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyApiProtocol.swift; sourceTree = "<group>"; };
 		80A2E8252A1F33B700AF0368 /* CurrencyApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyApi.swift; sourceTree = "<group>"; };
@@ -68,6 +70,7 @@
 				80A2E8232A1F2FC500AF0368 /* CurrencyApiProtocol.swift */,
 				80A2E8252A1F33B700AF0368 /* CurrencyApi.swift */,
 				80A2E8342A1F640100AF0368 /* Models.swift */,
+				80636D762A1FA09800352230 /* CurrencyPair.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -190,6 +193,7 @@
 				80A2E8262A1F33B700AF0368 /* CurrencyApi.swift in Sources */,
 				80A2E8372A1F65EE00AF0368 /* StringExtensions.swift in Sources */,
 				80A2E8322A1F5F2D00AF0368 /* CurrencySelectorViewModel.swift in Sources */,
+				80636D772A1FA09800352230 /* CurrencyPair.swift in Sources */,
 				80A2E8292A1F41CA00AF0368 /* UIViewControllerExtensions.swift in Sources */,
 				80A2E8392A1F6CC400AF0368 /* ArrayExtensions.swift in Sources */,
 				80A2E8302A1F5E4600AF0368 /* CurrencySelectorViewController.swift in Sources */,

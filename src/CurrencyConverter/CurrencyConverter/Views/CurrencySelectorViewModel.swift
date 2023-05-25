@@ -66,22 +66,3 @@ final class CurrencySelectorViewModel {
         }
     }
 }
-
-private class CurrencyPair {
-    
-    private let currencyA: String
-    private let currencyB: String
-    
-    init (_ currencyPairAsString: String) {
-        self.currencyA = currencyPairAsString[0..<3]
-        self.currencyB = currencyPairAsString[3...]
-    }
-    
-    func contains(_ currency: String) -> Bool {
-        return currencyA == currency || currencyB == currency
-    }
-    
-    func toArray() -> [String] {
-        return [currencyA, currencyB]
-    }
-}
