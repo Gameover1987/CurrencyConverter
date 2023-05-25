@@ -29,7 +29,6 @@ final class CurrencyApi : CurrencyApiProtocol {
         
         if (lastCurrencyListResponse != nil &&
             lastCurrencyListRequested.addingTimeInterval(cacheLifeTimeInSeconds) > Date()) {
-            print("Get currency list from cache")
             completion(.success(lastCurrencyListResponse!))
             return
         }
@@ -78,7 +77,6 @@ final class CurrencyApi : CurrencyApiProtocol {
         let pair = getFromCache(pairAsString)
         if (pair != nil) {
             let currencyRate = CurrencyRate(title: pairAsString, value: Double(pair!.value))
-            print("Get rate from cache \(currencyRate)")
             completion(.success(currencyRate))
             return
         }
