@@ -107,6 +107,18 @@ final class CurrencyConverterViewController : UIViewController {
     
     override func viewDidLoad() {
        setupUI()
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(self.keyboardWillShow),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil)
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(self.keyboardWillHide),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil)
     }
     
     @objc
@@ -151,6 +163,50 @@ final class CurrencyConverterViewController : UIViewController {
     @objc
     private func performCalculation() {
         converterViewModel.calculate()
+    }
+    
+    @objc func keyboardWillShow(_ notification: NSNotification) {
+            moveViewWithKeyboard(notification: notification, keyboardWillShow: true)
+    }
+    
+    @objc func keyboardWillHide(_ notification: NSNotification) {
+        moveViewWithKeyboard(notification: notification, keyboardWillShow: false)
+    }
+    
+    func moveViewWithKeyboard(notification: NSNotification, keyboardWillShow: Bool) {
+        // Keyboard's size
+        guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
+        let keyboardHeight = keyboardSize.height
+        
+        // Keyboard's animation duration
+        let keyboardDuration = notification.userInfo![UIResponder.keyboardAnimationDurationUserInfoKey] as! Double
+        
+        // Keyboard's animation curve
+        let keyboardCurve = UIView.AnimationCurve(rawValue: notification.userInfo![UIResponder.keyboardAnimationCurveUserInfoKey] as! Int)!
+        
+        // Change the constant
+        if keyboardWillShow {
+            let safeAreaExists = (self.view?.window?.safeAreaInsets.bottom != 0) // Check if safe area exists
+            let bottomConstant: CGFloat = 20
+            let offset = keyboardHeight + (safeAreaExists ? 0 : bottomConstant)
+            refreshButton.snp.makeConstraints { make in
+                make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-offset)
+            }
+            
+        } else {
+            refreshButton.snp.makeConstraints { make in
+                make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-24)
+            }
+        }
+        
+        // Animate the view the same way the keyboard animates
+        let animator = UIViewPropertyAnimator(duration: keyboardDuration, curve: keyboardCurve) { [weak self] in
+            // Update Constraints
+            self?.view.layoutIfNeeded()
+        }
+        
+        // Perform the animation
+        animator.startAnimation()
     }
     
     private func currencyASelectedBySelector(currency: String) {
