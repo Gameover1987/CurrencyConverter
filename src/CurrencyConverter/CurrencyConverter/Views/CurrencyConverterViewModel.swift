@@ -17,6 +17,14 @@ final class CurrencyConverterViewModel {
     
     var currencyASelectedAction: ((String) -> Void)?
     
+    var currencyAValue: Double = 0.0 {
+        didSet {
+            currencyAValueChangedAction?(currencyAValue)
+        }
+    }
+    
+    var currencyAValueChangedAction: ((Double) -> Void)?
+    
     var currencyB: String = "" {
         didSet {
             currencyBSelectedAction?(currencyB)
@@ -25,7 +33,55 @@ final class CurrencyConverterViewModel {
     
     var currencyBSelectedAction: ((String) -> Void)?
     
-    func calculate(completion: @escaping (Double) -> Void) {
+    var currencyBValue: Double = 0.0 {
+        didSet {
+            currencyBValueChangedAction?(currencyBValue)
+        }
+    }
+    
+    var currencyBValueChangedAction: ((Double) -> Void)?
+    
+    var isCalculationEnabled: Bool {
         
+        if (currencyA.isEmpty || currencyB.isEmpty) {
+            return false
+        }
+        
+        if (currencyAValue <= 0) {
+            return false
+        }
+        
+        return true
+    }
+    
+    var isSwapEnabled: Bool {
+        if (currencyA.isEmpty || currencyB.isEmpty) {
+            return false
+        }
+        
+        return true
+    }
+    
+    func swap() {
+        let buffer = currencyA
+        currencyA = currencyB
+        currencyB = buffer
+    }
+    
+    func calculate() {
+        let pair = currencyA+currencyB
+        currencyApi.performCurrencyRateRequest(pair: pair) { [weak self] result in
+            guard let self = self else {return}
+            
+            switch result {
+            case .failure(let error):
+                print(error)
+            case .success(let rate):
+                print(rate)
+                DispatchQueue.main.async {
+                    self.currencyBValue = self.currencyAValue * rate.value
+                }
+            }
+        }
     }
 }

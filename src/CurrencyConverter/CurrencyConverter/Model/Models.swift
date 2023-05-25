@@ -14,11 +14,12 @@ struct CurrencyRatesResponse : Codable {
     
     var message: String
     
-    var data: [CurrencyCalculation]
+    var data: [String: String]
 }
 
-struct CurrencyCalculation : Codable {
-    var name: String
+struct CurrencyRate {
+    
+    var title: String
     
     var value: Double
 }

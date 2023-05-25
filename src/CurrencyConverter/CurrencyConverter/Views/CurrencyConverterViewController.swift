@@ -7,6 +7,9 @@ final class CurrencyConverterViewController : UIViewController {
     private lazy var swapCurrencyButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "ExchangeIcon"), for: .normal)
+        
+        button.addTarget(self, action: #selector(swapCurrencyButtonPressed), for: .touchUpInside)
+        
         return button
     }()
     
@@ -28,9 +31,10 @@ final class CurrencyConverterViewController : UIViewController {
     private lazy var currencyATextField: UITextField = {
         let textField = UITextField()
         textField.textAlignment = .center
-        textField.text = "100"
         textField.font = UIFont.systemFont(ofSize: 22)
         textField.keyboardType = .numberPad
+        
+        textField.addTarget(self, action: #selector(currencyATextFieldEditingChanged), for: .editingChanged)
         
         return textField
     }()
@@ -76,7 +80,11 @@ final class CurrencyConverterViewController : UIViewController {
         let button = UIButton()
         button.layer.cornerRadius = 8
         button.setTitle("Refresh", for: .normal)
+        button.setTitleColor(.lightGray, for: .disabled)
         button.backgroundColor = UIColor(red: 0.231, green: 0.44, blue: 0.977, alpha: 1)
+        
+        button.addTarget(self, action: #selector(performCalculation), for: .touchUpInside)
+        
         return button
     }()
     
@@ -89,6 +97,7 @@ final class CurrencyConverterViewController : UIViewController {
         
         self.currencyConverterViewModel.currencyASelectedAction = currencyASelectedAction(currency:)
         self.currencyConverterViewModel.currencyBSelectedAction = currencyBSelectedAction(currency:)
+        self.currencyConverterViewModel.currencyBValueChangedAction = currencyBValueChangedAction(amount:)
     }
     
     required init?(coder: NSCoder) {
@@ -97,6 +106,11 @@ final class CurrencyConverterViewController : UIViewController {
     
     override func viewDidLoad() {
        setupUI()
+    }
+    
+    @objc
+    private func swapCurrencyButtonPressed() {
+        currencyConverterViewModel.swap()
     }
     
     @objc
@@ -117,22 +131,43 @@ final class CurrencyConverterViewController : UIViewController {
         self.navigationController?.pushViewController(currencySelectorController, animated: true)
     }
     
+    @objc
+    private func currencyATextFieldEditingChanged() {
+        guard let text = currencyATextField.text else {return}
+        guard let currencyParsedValue = Double(text) else {return}
+        currencyConverterViewModel.currencyAValue = Double(currencyParsedValue)
+        refreshButton.isEnabled = currencyConverterViewModel.isCalculationEnabled
+    }
+    
+    @objc
+    private func performCalculation() {
+        currencyConverterViewModel.calculate()
+    }
+    
     private func currencyASelectedBySelector(currency: String) {
         currencyConverterViewModel.currencyA = currency
+        swapCurrencyButton.isEnabled = currencyConverterViewModel.isSwapEnabled
     }
     
     private func currencyBSelectedBySelector(currency: String) {
         currencyConverterViewModel.currencyB = currency
+        swapCurrencyButton.isEnabled = currencyConverterViewModel.isSwapEnabled
     }
     
     private func currencyASelectedAction(currency: String) {
         currencyAButton.setTitle(currencyConverterViewModel.currencyA, for: .normal)
         currencyAButton.setTitleColor(.black, for: .normal)
+        refreshButton.isEnabled = currencyConverterViewModel.isCalculationEnabled
     }
     
     private func currencyBSelectedAction(currency: String) {
         currencyBButton.setTitle(currencyConverterViewModel.currencyB, for: .normal)
         currencyBButton.setTitleColor(.black, for: .normal)
+        refreshButton.isEnabled = currencyConverterViewModel.isCalculationEnabled
+    }
+    
+    private func currencyBValueChangedAction(amount: Double) {
+        currencyBTextField.text = String(format: "%.2f", amount)
     }
     
     private func setupUI(){
@@ -140,6 +175,9 @@ final class CurrencyConverterViewController : UIViewController {
         
         title = "Currency converter"
         self.simplifyNavigationBar()
+        
+        refreshButton.isEnabled = currencyConverterViewModel.isCalculationEnabled
+        swapCurrencyButton.isEnabled = currencyConverterViewModel.isSwapEnabled
         
         view.addSubview(swapCurrencyButton)
         swapCurrencyButton.snp.makeConstraints { make in
